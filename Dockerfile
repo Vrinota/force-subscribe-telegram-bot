@@ -1,8 +1,13 @@
 FROM python:3.10-slim
 
-# Set correct timezone
+# Set correct timezone and sync time manually
 ENV TZ=Etc/UTC
-RUN apt-get update && apt-get install -y tzdata && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && \
+    apt-get install -y tzdata ntpdate && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    ntpdate -u pool.ntp.org
 
 # Set working directory
 WORKDIR /app
@@ -11,8 +16,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy bot files
+# Copy all files
 COPY . .
 
-# Run bot
+# Start the bot
 CMD ["python3", "bot.py"]
