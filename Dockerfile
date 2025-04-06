@@ -1,13 +1,13 @@
 FROM python:3.10-slim
 
-# Set correct timezone and sync time manually
+# Set correct timezone
 ENV TZ=Etc/UTC
 
+# Install tzdata without trying to sync system time (which isn't allowed on Railway)
 RUN apt-get update && \
-    apt-get install -y tzdata ntpdate && \
+    apt-get install -y tzdata && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    ntpdate -u pool.ntp.org
+    echo $TZ > /etc/timezone
 
 # Set working directory
 WORKDIR /app
